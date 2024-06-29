@@ -1,6 +1,7 @@
 # Main.py
 
-from petClass import Pet, create_pet, update_pet
+from petClass import Pet, create_pet, update_pet, pet_mood_interaction, process_mood_response
+
 
 def main():
     # 创建一个新宠物
@@ -9,6 +10,14 @@ def main():
     print(f"欢迎您的新宠物 {pet.name}!")
 
     while True:
+        # 检查是否应该开始心情互动
+        interaction_result = pet_mood_interaction(pet)
+        if interaction_result["interaction_started"]:
+            print(interaction_result["question"])
+            user_mood = input("请选择你的心情 (好/正常/坏): ")
+            response = process_mood_response(pet, user_mood)
+            print(response["pet_response"])
+
         # 模拟用户输入食物
         food = input("请输入您给宠物的食物（输入'退出'结束）：")
         if food.lower() == '退出':
