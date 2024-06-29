@@ -7,6 +7,6 @@
 
 ### 技术路线
 
-本项目使用python进行开发，前端采用kivi进行游戏渲染和功能组件实现，后端采用python并调用chatgpt api接口接入AI功能
+本项目使用python进行开发，前端采用kivy进行游戏渲染和功能组件实现，后端采用python并调用chatgpt api接口接入AI功能
 
 ### 游戏功能演示
