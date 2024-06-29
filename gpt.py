@@ -1,5 +1,7 @@
 import base64
 import requests
+import re
+import json
 
 def encode_image(image_path):
     try:
@@ -31,7 +33,8 @@ def make_request(image_path, text_content):
                 ]
             }
         ],
-        "max_tokens": 300
+        "max_tokens": 300,
+        #"stop": ['}']
     }
 
     try:
@@ -45,6 +48,28 @@ def make_request(image_path, text_content):
         print(f"Request failed: {e}")
         return None
 
+def extract_food_information(text):
+    # 使用正则表达式匹配foodname和score
+    pattern = r'"foodname":\s*"([^"]+)",\s*"score":\s*(\d+)'
+    matches = re.finditer(pattern, text, re.MULTILINE)
+
+    results = []
+    for match in matches:
+        # 将匹配的字符串转换为JSON对象
+        try:
+            food_info = {
+                "foodname": match.group(1),
+                "score": int(match.group(2))
+            }
+            results.append(food_info)
+        except ValueError:
+            continue  # 如果转换失败，跳过这个匹配
+
+    if results:
+        return json.dumps(results, indent=4)  # 返回格式化的JSON字符串
+    else:
+        return None  # 如果没有匹配项，返回None
+
 # Example usage:
 image_path = "morethanone.jpg"
 text_content = """
@@ -53,8 +78,12 @@ text_content = """
         If an image contains multiple food items, you need to score each one individually/
         score is the calculated number/
         score ranges from 0 to 100/
-        The output result is {food : foodname , score : the food's score}/
-        Output the result in json, which includes the following json keys: foodname,score/
+        Output structured JSON object, conforming to the following TypeScript：
+        FoodInformation {
+        foodname: string;
+        score: number
+        }
+
 
 
                 Here's the content of the food scoring algorithm:
@@ -76,5 +105,6 @@ text_content = """
                 - `Total score = (Calories standard score × 0.15) + (Fat standard score × 0.25) + (Fiber standard score × 0.20) + (Sugar standard score × 0.20) + (Protein standard score × 0.10) + (Sodium standard score × 0.10)`
           """
 
-result = make_request(image_path, text_content)
+text = make_request(image_path, text_content)
+result=extract_food_information(text)
 print(result)
