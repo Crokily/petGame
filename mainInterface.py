@@ -38,6 +38,8 @@ class PetApp(App):
         main_layout.add_widget(status_layout)
 
 
+        
+
         # Center area with the pet image
         pet_layout = FloatLayout(size_hint=(1, 0.8))
         self.pet_image = Image(source='/Users/yangtiechui/Downloads/kaola.png', size_hint=(None, None), size=(100, 100), pos_hint={'center_x': 0.5, 'center_y': 0.5})
@@ -55,15 +57,11 @@ class PetApp(App):
             button_layout.add_widget(Button(text=button, font_size=30))
         main_layout.add_widget(button_layout)
 
-        # 创建一个新宠物
-        self.pet = create_pet("Koala")
-
         # Bind keyboard events
         Window.bind(on_key_down=self.on_key_down)
 
         # Schedule the update of pet's position
         Clock.schedule_interval(self.update_position, 1.0 / 60.0)  # Update 60 times per second
-        Clock.schedule_interval(self.update_status, 1.0)  # Update status every second
 
         return main_layout
 
@@ -80,18 +78,5 @@ class PetApp(App):
     def update_position(self, dt):
         self.pet_image.pos_hint = {'center_x': self.pet_x, 'center_y': self.pet_y}
 
-    def update_status(self, dt):
-        # 从后端获取最新的宠物状态
-        status = get_pet_status(self.pet)
-        
-        # 更新进度条的值
-        self.hunger_bar.value = status['health']
-        self.energy_bar.value = status['energy']
-        self.happy_bar.value = status['happiness']
-        self.health_bar.value = status['growth']
-
-
-        # # 更新宠物的状态   
-        # self.pet.update_attributes(status['combined_score'])
 if __name__ == "__main__":
     PetApp().run()
