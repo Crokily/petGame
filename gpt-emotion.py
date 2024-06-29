@@ -38,4 +38,4 @@ def generate_emotion_response(api_key, user_emotion):
         stop=["."]  
     )
 
-    return response.choices[0].message["content"]
+    return response.choices[0].message.content
