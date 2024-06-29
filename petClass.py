@@ -1,5 +1,6 @@
 import random
 from datetime import datetime, timedelta
+import time
 
 class Pet:
     def __init__(self, name):
@@ -80,6 +81,51 @@ class Pet:
             "food_score": 0,
             "combined_score": 0
         }
+    
+    def initiate_mood_interaction(self):
+        """开始心情互动"""
+        current_time = time.time()
+        if not hasattr(self, 'last_interaction_time') or current_time - self.last_interaction_time > 300:  # 5分钟间隔
+            self.last_interaction_time = current_time
+            return True
+        return False
+
+    def ask_mood(self):
+        """询问主人的心情"""
+        return "小主人，今天心情如何呀？\n😊 - 好\n😐 - 正常\n😢 - 坏"
+
+    def respond_to_mood(self, mood):
+        """根据主人的心情做出回应"""
+        if mood == "好":
+            return self.generate_response("positive")
+        elif mood == "正常":
+            return self.generate_response("neutral")
+        elif mood == "坏":
+            return self.generate_response("negative")
+        else:
+            return "对不起，我不太明白。能再说一次吗？"
+
+    def generate_response(self, mood_type):
+        """生成回应（这里用固定的回复代替API调用）"""
+        responses = {
+            "positive": [
+                f"太好了！{self.name}也为你感到高兴呢！",
+                f"听到你心情不错，{self.name}也开心起来了！",
+                "阳光灿烂的心情最适合你了！"
+            ],
+            "neutral": [
+                f"{self.name}陪着你，希望能让你的心情变得更好！",
+                "平静的心情也不错，要不要和我玩个游戏？",
+                "普普通通的一天，也有它的美好之处哦！"
+            ],
+            "negative": [
+                f"{self.name}在这里陪着你，别难过了好吗？",
+                "每个人都会有不开心的时候，让我们一起度过这个难关吧！",
+                "不开心的时候吃点好吃的怎么样？我可以推荐一些健康食品哦！"
+            ]
+        }
+        return random.choice(responses[mood_type])
+
 
 def create_pet(name):
     return Pet(name)
@@ -126,3 +172,20 @@ def update_pet(pet, food_name):
 
 def get_pet_status(pet):
     return pet.get_All()
+
+def pet_mood_interaction(pet):
+    """处理宠物心情互动的功能"""
+    if pet.initiate_mood_interaction():
+        question = pet.ask_mood()
+        return {
+            "interaction_started": True,
+            "question": question
+        }
+    return {"interaction_started": False}
+
+def process_mood_response(pet, mood):
+    """处理用户对心情问题的回答"""
+    response = pet.respond_to_mood(mood)
+    return {
+        "pet_response": response
+    }
