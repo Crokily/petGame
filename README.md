@@ -1,4 +1,5 @@
-# raising your electronic house pet in healthy way
+# GPT Pet Game
+## raising your electronic house pet in healthy way
 我们的项目是raising your electronic house pet in healthy way，我们希望通过健康的饮食喂养你的宠物，你吃的越健康，你的宠物成长的越快
 
 你可以拍照上传今天的饮食对宠物进行投喂，我们设计了一套食物健康评分算法来对饮食进行评分，划分了六个维度：热量、脂肪、纤维、糖分、蛋白质、钠。我们会把图像上传给AI，通过AI分析食物的成分从而对食物打分，并将得分与宠物的成长值联系起来。你吃的越健康，你的宠物也越就健康。我们也设置了每过一个时间段，成长值会因为饥饿自然降低，如果你吃了不健康的食物，也会倒扣宠物的成长值。
