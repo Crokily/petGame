@@ -19,7 +19,7 @@ class EntryScreen(Screen):
     def __init__(self, **kwargs):
         super(EntryScreen, self).__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', padding=(10, 10))
-        self.question_label = Label(text="Enter food:", font_size=14)
+        self.question_label = Label(text="Enter Name:", font_size=50)
         self.food_input = TextInput(multiline=False)
         self.food_input.bind(on_text_validate=self.on_enter_text_validate)
         layout.add_widget(self.question_label)

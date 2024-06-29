@@ -65,7 +65,7 @@ class PetApp(App):
 
         # Center area with the pet image
         pet_layout = FloatLayout(size_hint=(1, 0.8))
-        self.pet_image = Image(source='/mnt/data/image.png', size_hint=(None, None), size=(200, 200), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        self.pet_image = Image(source='/Users/julian/Desktop/Course/hackathon/petGame/1.png', size_hint=(None, None), size=(200, 200), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         pet_layout.add_widget(self.pet_image)
         main_layout.add_widget(pet_layout)
 
@@ -87,9 +87,9 @@ class PetApp(App):
         # 创建一个新宠物
         self.pet = create_pet("Koala")
 
-        # 创建一个弹出对话框进行交互
+        #创建一个弹出对话框进行交互
         self.popup_content = BoxLayout(orientation='vertical', padding=(10, 10))
-        self.question_label = Label(text="Enter food:", font_size=14)
+        self.question_label = Label(text="Enter food", font_size=14)
         self.food_input = TextInput(multiline=False)
         self.food_input.bind(on_text_validate=self.on_enter)
         self.popup_content.add_widget(self.question_label)
