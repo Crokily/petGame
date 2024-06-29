@@ -1,6 +1,8 @@
 import random
 from datetime import datetime, timedelta
 import time
+import json
+import os
 
 class Pet:
     def __init__(self, name):
@@ -11,6 +13,7 @@ class Pet:
         self.growth = 10
         self.food_uploads = 0
         self.last_upload_date = None
+        self.last_interaction_time = 0
 
     def update_attributes(self, score):
         if 8 <= score <= 10:
@@ -126,6 +129,31 @@ class Pet:
         }
         return random.choice(responses[mood_type])
 
+    def to_dict(self):
+        """将宠物对象转换为字典"""
+        return {
+            "name": self.name,
+            "health": self.health,
+            "energy": self.energy,
+            "happiness": self.happiness,
+            "growth": self.growth,
+            "food_uploads": self.food_uploads,
+            "last_upload_date": self.last_upload_date.isoformat() if self.last_upload_date else None,
+            "last_interaction_time": self.last_interaction_time
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        """从字典创建宠物对象"""
+        pet = cls(data["name"])
+        pet.health = data["health"]
+        pet.energy = data["energy"]
+        pet.happiness = data["happiness"]
+        pet.growth = data["growth"]
+        pet.food_uploads = data["food_uploads"]
+        pet.last_upload_date = datetime.fromisoformat(data["last_upload_date"]) if data["last_upload_date"] else None
+        pet.last_interaction_time = data["last_interaction_time"]
+        return pet
 
 def create_pet(name):
     return Pet(name)
@@ -189,3 +217,16 @@ def process_mood_response(pet, mood):
     return {
         "pet_response": response
     }
+
+def save_pet(pet, filename="pet_data.json"):
+    """保存宠物数据到JSON文件"""
+    with open(filename, "w") as f:
+        json.dump(pet.to_dict(), f)
+
+def load_pet(filename="pet_data.json"):
+    """从JSON文件加载宠物数据"""
+    if os.path.exists(filename):
+        with open(filename, "r") as f:
+            data = json.load(f)
+        return Pet.from_dict(data)
+    return None
