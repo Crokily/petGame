@@ -123,3 +123,6 @@ def update_pet(pet, food_name):
         "food_score": food_score,
         "combined_score": combined_score
     }
+
+def get_pet_status(pet):
+    return pet.get_All()
