@@ -12,33 +12,30 @@ from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.uix.camera import Camera
 from kivy.graphics import Color, RoundedRectangle, Triangle
+from kivy.uix.screenmanager import ScreenManager, Screen
 from petClass import Pet, create_pet, update_pet, get_pet_status
 
-class ArrowPopup(Popup):
+class EntryScreen(Screen):
     def __init__(self, **kwargs):
-        super(ArrowPopup, self).__init__(**kwargs)
-        with self.canvas.before:
-            Color(1, 1, 1, 1)  # White background
-            self.rect = RoundedRectangle(size=self.size, pos=self.pos, radius=[10])
-            self.arrow = Triangle(points=[
-                self.x + self.width / 2, self.y,
-                self.x + self.width / 2 - 10, self.y - 20,
-                self.x + self.width / 2 + 10, self.y - 20
-            ])
+        super(EntryScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical', padding=(10, 10))
+        self.question_label = Label(text="Enter food:", font_size=14)
+        self.food_input = TextInput(multiline=False)
+        self.food_input.bind(on_text_validate=self.on_enter_text_validate)
+        layout.add_widget(self.question_label)
+        layout.add_widget(self.food_input)
+        self.add_widget(layout)
 
-        self.bind(size=self._update_shape, pos=self._update_shape)
+    def on_enter_text_validate(self, instance):
+        food = self.food_input.text
+        if food.lower() == 'exit':
+            App.get_running_app().stop()
+        else:
+            self.manager.current = 'maininterface'
 
-    def _update_shape(self, instance, value):
-        self.rect.pos = self.pos
-        self.rect.size = self.size
-        self.arrow.points = [
-            self.x + self.width / 2, self.y,
-            self.x + self.width / 2 - 10, self.y - 20,
-            self.x + self.width / 2 + 10, self.y - 20
-        ]
-
-class PetApp(App):
-    def build(self):
+class MainInterface(Screen):
+    def __init__(self, **kwargs):
+        super(MainInterface, self).__init__(**kwargs)
         main_layout = BoxLayout(orientation='vertical')
 
         # Top bar with status bars
@@ -84,21 +81,10 @@ class PetApp(App):
         
         main_layout.add_widget(button_layout)
 
+        self.add_widget(main_layout)
+
         # 创建一个新宠物
         self.pet = create_pet("Koala")
-
-        # 创建一个弹出对话框进行交互
-        self.popup_content = BoxLayout(orientation='vertical', padding=(10, 10))
-        self.question_label = Label(text="Enter food:", font_size=14)
-        self.food_input = TextInput(multiline=False)
-        self.food_input.bind(on_text_validate=self.on_enter)
-        self.popup_content.add_widget(self.question_label)
-        self.popup_content.add_widget(self.food_input)
-        self.popup = ArrowPopup(title='', content=self.popup_content, size_hint=(0.3, 0.3), auto_dismiss=False)
-
-        # 设置弹出框位置在图片下方
-        self.popup.pos_hint = {'center_x': self.pet_x, 'top': self.pet_y - 0.15}
-        self.popup.open()
 
         # Bind keyboard events
         Window.bind(on_key_down=self.on_key_down)
@@ -106,8 +92,6 @@ class PetApp(App):
         # Schedule the update of pet's position and status
         Clock.schedule_interval(self.update_position, 1.0 / 60.0)  # Update 60 times per second
         Clock.schedule_interval(self.update_status, 1.0)  # Update status every second
-
-        return main_layout
 
     def on_key_down(self, window, key, scancode, codepoint, modifier):
         if key == 273:  # Up arrow key
@@ -121,7 +105,6 @@ class PetApp(App):
 
     def update_position(self, dt):
         self.pet_image.pos_hint = {'center_x': self.pet_x, 'center_y': self.pet_y}
-        self.popup.pos_hint = {'center_x': self.pet_x, 'top': self.pet_y - 0.15}
 
     def update_status(self, dt):
         # 从后端获取最新的宠物状态
@@ -132,23 +115,6 @@ class PetApp(App):
         self.energy_bar.value = status['energy']
         self.happy_bar.value = status['happiness']
         self.health_bar.value = status['growth']
-
-    def on_enter(self, instance):
-        food = self.food_input.text
-        if food.lower() == 'exit':
-            self.popup.dismiss()
-        else:
-            self.update_statuses(food)
-        self.food_input.text = ''
-
-    def update_statuses(self, food):
-        update_result = update_pet(self.pet, food)
-
-        # Update status bars
-        self.hunger_bar.value = update_result['health']
-        self.energy_bar.value = update_result['energy']
-        self.happy_bar.value = update_result['happiness']
-        self.health_bar.value = update_result['growth']
 
     def take_photo(self, instance):
         # 打开拍照界面
@@ -170,6 +136,13 @@ class PetApp(App):
         self.camera.export_to_png("captured_image.png")
         self.popup.dismiss()
         # 这里你可以实现上传照片的逻辑，例如上传到服务器或处理图像
+
+class PetApp(App):
+    def build(self):
+        sm = ScreenManager()
+        sm.add_widget(EntryScreen(name='entry'))
+        sm.add_widget(MainInterface(name='maininterface'))
+        return sm
 
 if __name__ == "__main__":
     PetApp().run()

@@ -40,34 +40,34 @@ class Pet:
 
     def get_health_status(self):
         if self.health > 30:
-            return "健康"
+            return "Healthy"
         elif 10 < self.health <= 30:
-            return "生病"
+            return "Sick"
         else:
-            return "死亡"
+            return "Dead"
 
     def get_happiness_status(self):
         if self.happiness > 30:
-            return "开心"
+            return "Happy"
         elif 10 < self.happiness <= 30:
-            return "一般"
+            return "Neutral"
         else:
-            return "不开心"
+            return "Unhappy"
 
     def get_status_message(self):
         health_status = self.get_health_status()
         happiness_status = self.get_happiness_status()
 
-        if health_status == "生病":
-            return "你的宠物生病了，请注意吃更多的健康食物来帮助它恢复。"
-        elif health_status == "死亡":
-            return "很遗憾，你的宠物因为不健康的饮食习惯已经死亡。请重新开始并尝试更健康的饮食。"
-        elif happiness_status == "开心":
-            return "你的宠物非常开心，继续保持健康的饮食习惯！"
+        if health_status == "Sick":
+            return "Your pet is sick, please provide more healthy food to help it recover."
+        elif health_status == "Dead":
+            return "Unfortunately, your pet has died due to unhealthy eating habits. Please start over and try healthier options."
+        elif happiness_status == "Happy":
+            return "Your pet is very happy, keep up the good diet!"
         else:
-            return "你的宠物状态一般，请继续关注它的饮食。"
+            return "Your pet is in a neutral state, please continue to monitor its diet."
         
-    def get_All(self):
+    def get_all(self):
         return {
             "name": self.name,
             "health": self.health,
@@ -85,8 +85,7 @@ def create_pet(name):
     return Pet(name)
 
 def calculate_food_score(food_name):
-    # 这里应该调用GPT API来识别食物并给出评分
-    # 为了演示，我们用随机数模拟
+    # Placeholder for GPT API call to identify food and give a score
     return random.uniform(0, 10)
 
 def calculate_upload_frequency_score(pet):
@@ -125,4 +124,4 @@ def update_pet(pet, food_name):
     }
 
 def get_pet_status(pet):
-    return pet.get_All()
+    return pet.get_all()
